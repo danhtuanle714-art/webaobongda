@@ -2,6 +2,7 @@
 // CartController.php - Handles shopping cart actions and checkout flow
 require_once __DIR__ . '/../model/sanpham.php';
 require_once __DIR__ . '/../model/donhang.php';
+require_once __DIR__ . '/../model/magiamgia.php';
 
 class CartController {
 
@@ -151,12 +152,24 @@ class CartController {
                 $tong_tien += $item['gia'] * $item['quantity'];
             }
 
+            // Áp dụng mã giảm giá từ session
+            $ma_giam_gia = null;
+            $tien_giam = 0;
+            if (!empty($_SESSION['applied_coupon'])) {
+                $coupon = $_SESSION['applied_coupon'];
+                if ($tong_tien >= $coupon['min_order']) {
+                    $tien_giam = $coupon['discount'];
+                    $ma_giam_gia = $coupon['code'];
+                    $tong_tien = max(0, $tong_tien - $tien_giam);
+                }
+            }
+
             $id_user = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
             $ngay_dat = date('d-m-Y H:i:s');
 
             try {
                 // 1. Lưu vào bảng donhang
-                $id_donhang = donhang_insert($id_user, $nguoi_nhan, $email, $dien_thoai, $dia_chi, $ngay_dat, $tong_tien, $pttt);
+                $id_donhang = donhang_insert($id_user, $nguoi_nhan, $email, $dien_thoai, $dia_chi, $ngay_dat, $tong_tien, $pttt, $ma_giam_gia, $tien_giam);
 
                 if ($id_donhang > 0) {
                     // 2. Lưu chi tiết đơn hàng
@@ -172,8 +185,9 @@ class CartController {
                         );
                     }
 
-                    // 3. Xóa giỏ hàng sau khi đặt thành công
+                    // 3. Xóa giỏ hàng và mã giảm giá sau khi đặt thành công
                     $_SESSION['cart'] = [];
+                    unset($_SESSION['applied_coupon']);
 
                     // Chuyển tới trang thành công
                     header("Location: index.php?act=donhang-success&id=" . $id_donhang);
@@ -192,6 +206,53 @@ class CartController {
             header('Location: index.php?act=trangchu');
             exit();
         }
+    }
+
+    /**
+     * Áp dụng mã giảm giá vào session
+     */
+    public function applyCoupon() {
+        $code = isset($_POST['ma_giam_gia']) ? strtoupper(trim($_POST['ma_giam_gia'])) : '';
+        
+        // Tính tổng tiền giỏ hàng hiện tại
+        $tong_tien = 0;
+        foreach ($_SESSION['cart'] as $item) {
+            $tong_tien += $item['gia'] * $item['quantity'];
+        }
+
+        if (!empty($code)) {
+            $coupon = magiamgia_get_by_code($code);
+            if (!$coupon) {
+                $_SESSION['coupon_error'] = 'Ma giam gia khong ton tai!';
+            } elseif ($coupon['status'] != 1) {
+                $_SESSION['coupon_error'] = 'Ma giam gia da bi khoa!';
+            } elseif ($tong_tien < $coupon['min_order']) {
+                $min_fmt = number_format($coupon['min_order'], 0, ',', '.');
+                $_SESSION['coupon_error'] = 'Don hang toi thieu ' . $min_fmt . 'd de dung ma nay!';
+            } else {
+                $_SESSION['applied_coupon'] = [
+                    'code'      => $coupon['code'],
+                    'discount'  => $coupon['discount'],
+                    'min_order' => $coupon['min_order'],
+                ];
+                unset($_SESSION['coupon_error']);
+            }
+        }
+
+        $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'giohang';
+        header('Location: index.php?act=' . $redirect);
+        exit();
+    }
+
+    /**
+     * Hủy mã giảm giá đã áp dụng
+     */
+    public function removeCoupon() {
+        unset($_SESSION['applied_coupon']);
+        unset($_SESSION['coupon_error']);
+        $redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'giohang';
+        header('Location: index.php?act=' . $redirect);
+        exit();
     }
 
     /**

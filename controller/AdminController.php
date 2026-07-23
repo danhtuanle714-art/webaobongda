@@ -812,5 +812,93 @@ class AdminController {
         include 'view/thongke/index.php';
         include 'view/footer.php';
     }
+
+    // ===================== MA GIAM GIA MANAGEMENT =====================
+
+    public function magiamgia_list() {
+        require_once __DIR__ . '/../model/magiamgia.php';
+        $ds_magiamgia = magiamgia_all();
+        include 'view/header.php';
+        include 'view/magiamgia/list.php';
+        include 'view/footer.php';
+    }
+
+    public function magiamgia_add() {
+        require_once __DIR__ . '/../model/magiamgia.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $code      = strtoupper(trim($_POST['code'] ?? ''));
+            $discount  = floatval($_POST['discount'] ?? 0);
+            $min_order = floatval($_POST['min_order'] ?? 0);
+            $expiry    = trim($_POST['expiry_date'] ?? '');
+            $status    = intval($_POST['status'] ?? 1);
+
+            if (empty($code) || $discount <= 0 || empty($expiry)) {
+                $_SESSION['admin_error'] = 'Vui long nhap day du thong tin bat buoc!';
+                header('Location: index.php?act=magiamgia-add');
+                exit();
+            }
+
+            $existing = magiamgia_get_by_code($code);
+            if ($existing) {
+                $_SESSION['admin_error'] = 'Ma giam gia "' . $code . '" da ton tai!';
+                header('Location: index.php?act=magiamgia-add');
+                exit();
+            }
+
+            magiamgia_insert($code, $discount, $min_order, $expiry, $status);
+            $_SESSION['admin_success'] = 'Da them ma giam gia "' . $code . '" thanh cong!';
+            header('Location: index.php?act=magiamgia-list');
+            exit();
+        }
+
+        include 'view/header.php';
+        include 'view/magiamgia/add.php';
+        include 'view/footer.php';
+    }
+
+    public function magiamgia_edit() {
+        require_once __DIR__ . '/../model/magiamgia.php';
+        $id = intval($_GET['id'] ?? 0);
+        $coupon = magiamgia_get_by_id($id);
+
+        if (!$coupon) {
+            header('Location: index.php?act=magiamgia-list');
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $code      = strtoupper(trim($_POST['code'] ?? ''));
+            $discount  = floatval($_POST['discount'] ?? 0);
+            $min_order = floatval($_POST['min_order'] ?? 0);
+            $expiry    = trim($_POST['expiry_date'] ?? '');
+            $status    = intval($_POST['status'] ?? 1);
+
+            if (empty($code) || $discount <= 0 || empty($expiry)) {
+                $_SESSION['admin_error'] = 'Vui long nhap day du thong tin bat buoc!';
+                header('Location: index.php?act=magiamgia-edit&id=' . $id);
+                exit();
+            }
+
+            magiamgia_update($id, $code, $discount, $min_order, $expiry, $status);
+            $_SESSION['admin_success'] = 'Da cap nhat ma giam gia thanh cong!';
+            header('Location: index.php?act=magiamgia-list');
+            exit();
+        }
+
+        include 'view/header.php';
+        include 'view/magiamgia/edit.php';
+        include 'view/footer.php';
+    }
+
+    public function magiamgia_delete() {
+        require_once __DIR__ . '/../model/magiamgia.php';
+        $id = intval($_GET['id'] ?? 0);
+        if ($id > 0) {
+            magiamgia_delete($id);
+            $_SESSION['admin_success'] = 'Da xoa ma giam gia thanh cong!';
+        }
+        header('Location: index.php?act=magiamgia-list');
+        exit();
+    }
 }
 ?>

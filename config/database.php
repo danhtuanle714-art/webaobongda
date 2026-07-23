@@ -127,6 +127,36 @@ function auto_initialize_db($pdo) {
         FOREIGN KEY (`id_sanpham`) REFERENCES `sanpham`(`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+    // 9. Create table magiamgia (Coupons)
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `magiamgia` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `code` VARCHAR(50) NOT NULL UNIQUE,
+        `discount` DOUBLE NOT NULL,
+        `min_order` DOUBLE DEFAULT 0,
+        `expiry_date` VARCHAR(20) NOT NULL,
+        `status` INT DEFAULT 1 -- 1: Kích hoạt, 0: Khóa
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    // Add columns to donhang table if they do not exist
+    try {
+        $stmtCol = $pdo->query("SHOW COLUMNS FROM `donhang` LIKE 'ma_giam_gia'");
+        if ($stmtCol->rowCount() === 0) {
+            $pdo->exec("ALTER TABLE `donhang` ADD COLUMN `ma_giam_gia` VARCHAR(50) NULL, ADD COLUMN `tien_giam` DOUBLE DEFAULT 0;");
+        }
+    } catch (Exception $e) {
+        // Ignore if error or columns already exist
+    }
+
+    // Seed Coupons if table is empty
+    $stmtCountGG = $pdo->query("SELECT COUNT(*) FROM magiamgia");
+    if ($stmtCountGG->fetchColumn() <= 0) {
+        $pdo->exec("INSERT INTO `magiamgia` (`code`, `discount`, `min_order`, `expiry_date`, `status`) VALUES
+            ('GIAM50', 50000, 500000, '31-12-2026', 1),
+            ('GIAM100', 100000, 1000000, '31-12-2026', 1),
+            ('GIAM200', 200000, 2000000, '31-12-2026', 1),
+            ('SNEAKER150', 150000, 1500000, '31-12-2026', 1);");
+    }
+
     // Seed Categories
     $stmtCountDM = $pdo->query("SELECT COUNT(*) FROM danhmuc");
     if ($stmtCountDM->fetchColumn() <= 0) {

@@ -118,6 +118,9 @@
                     <span style="margin-left:auto;background:#6366f1;color:white;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;"><?php echo $pending_bl; ?></span>
                 <?php endif; ?>
             </a>
+            <a href="index.php?act=magiamgia-list" class="sidebar-link <?php echo (isset($_GET['act']) && strpos($_GET['act'],'magiamgia')!==false) ? 'active' : ''; ?>">
+                <i class="fa-solid fa-ticket" style="width:16px;"></i> Mã giảm giá
+            </a>
 
         </nav>
 

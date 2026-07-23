@@ -72,6 +72,12 @@ switch ($act) {
     // Statistics & Reports
     case 'thongke':         $controller->thongke();        break;
 
+    // Coupon Management routes
+    case 'magiamgia-list':   $controller->magiamgia_list();  break;
+    case 'magiamgia-add':    $controller->magiamgia_add();   break;
+    case 'magiamgia-edit':   $controller->magiamgia_edit();  break;
+    case 'magiamgia-delete': $controller->magiamgia_delete(); break;
+
     default:
         header('Location: index.php?act=dashboard');
         exit();

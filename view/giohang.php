@@ -117,26 +117,77 @@ if (!defined('DB_HOST')) {
                 <h3 style="font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
                     Thông tin đơn hàng
                 </h3>
-                
+
+                <?php
+                // Coupon calculation
+                $tien_giam = 0;
+                $coupon_code = '';
+                if (!empty($_SESSION['applied_coupon'])) {
+                    $c = $_SESSION['applied_coupon'];
+                    if ($tong_tien >= $c['min_order']) {
+                        $tien_giam = $c['discount'];
+                        $coupon_code = $c['code'];
+                    }
+                }
+                $tong_sau_giam = max(0, $tong_tien - $tien_giam);
+                ?>
+
+                <!-- Coupon Input Box -->
+                <div style="margin-bottom: 18px;">
+                    <?php if (!empty($_SESSION['coupon_error'])): ?>
+                        <div style="background:#fee2e2;color:#991b1b;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:10px;">
+                            <i class="fa-solid fa-circle-xmark"></i> <?php echo htmlspecialchars($_SESSION['coupon_error']); ?>
+                        </div>
+                        <?php unset($_SESSION['coupon_error']); ?>
+                    <?php endif; ?>
+
+                    <?php if ($tien_giam > 0): ?>
+                        <div style="background:#dcfce7;color:#166534;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                            <span><i class="fa-solid fa-tag"></i> Đã áp dụng: <strong><?php echo $coupon_code; ?></strong></span>
+                            <a href="index.php?act=huy-magiamgia&redirect=giohang" style="color:#ef4444;font-size:12px;text-decoration:none;" title="Hủy mã">
+                                <i class="fa-solid fa-xmark"></i>
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <form method="POST" action="index.php?act=ap-dung-magiamgia" style="display:flex;gap:8px;">
+                            <input type="hidden" name="redirect" value="giohang">
+                            <input type="text" name="ma_giam_gia" placeholder="Nhập mã giảm giá..."
+                                style="flex:1;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"
+                                value="<?php echo isset($_SESSION['applied_coupon']) ? htmlspecialchars($_SESSION['applied_coupon']['code']) : ''; ?>">
+                            <button type="submit"
+                                style="background:#0f172a;color:white;padding:9px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+                                Áp dụng
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
                 <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px;">
                     <span style="color: var(--text-muted);">Tạm tính (<?php echo count($cart); ?> sản phẩm)</span>
                     <span style="font-weight: 600; color: var(--text-dark);"><?php echo number_format($tong_tien, 0, ',', '.'); ?>đ</span>
                 </div>
-                
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; border-bottom: 1px dashed var(--border-color); padding-bottom: 15px;">
+
+                <?php if ($tien_giam > 0): ?>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px;">
+                    <span style="color: #16a34a;">Giảm giá (<?php echo $coupon_code; ?>)</span>
+                    <span style="font-weight: 700; color: #16a34a;">-<?php echo number_format($tien_giam, 0, ',', '.'); ?>đ</span>
+                </div>
+                <?php endif; ?>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
                     <span style="color: var(--text-muted);">Phí vận chuyển</span>
                     <span style="font-weight: 600; color: var(--success);">Miễn phí</span>
                 </div>
-                
-                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; border-top: 2px solid var(--border-color); padding-top: 15px;">
                     <span style="font-size: 16px; font-weight: 700; color: var(--text-dark);">Tổng thanh toán</span>
-                    <span style="font-size: 20px; font-weight: 800; color: var(--danger);"><?php echo number_format($tong_tien, 0, ',', '.'); ?>đ</span>
+                    <span style="font-size: 20px; font-weight: 800; color: var(--danger);"><?php echo number_format($tong_sau_giam, 0, ',', '.'); ?>đ</span>
                 </div>
-                
+
                 <a href="index.php?act=thanhtoan" class="btn-primary" style="width: 100%; text-align: center; display: block; text-transform: uppercase; font-weight: 700; font-size: 15px; padding: 14px 20px; border-radius: var(--radius);">
                     Tiến hành thanh toán <i class="fa-solid fa-credit-card" style="margin-left: 8px;"></i>
                 </a>
-                
+
                 <div style="margin-top: 20px; text-align: center; font-size: 12px; color: var(--text-muted);">
                     <i class="fa-solid fa-lock" style="color: var(--success); margin-right: 5px;"></i> Thanh toán bảo mật tuyệt đối 100%
                 </div>

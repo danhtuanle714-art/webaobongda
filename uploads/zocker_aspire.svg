@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">
     <defs>
-        <linearGradient id="padFace_6a427de399c56" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id="padFace_6a47c439d93c0" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#1e293b" />
             <stop offset="100%" stop-color="#0f172a" />
         </linearGradient>
@@ -20,7 +20,7 @@
     <path d="M 82 135 L 118 135 L 110 120 L 90 120 Z" fill="#475569"/>
     
     <!-- Paddle Face -->
-    <rect x="50" y="10" width="100" height="120" rx="24" fill="url(#padFace_6a427de399c56)" stroke="#1e293b" stroke-width="2"/>
+    <rect x="50" y="10" width="100" height="120" rx="24" fill="url(#padFace_6a47c439d93c0)" stroke="#1e293b" stroke-width="2"/>
     
     <!-- Outer edge guard -->
     <rect x="48" y="8" width="104" height="124" rx="26" fill="none" stroke="#d946ef" stroke-width="3"/>

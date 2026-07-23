@@ -4,10 +4,10 @@ require_once __DIR__ . '/connect.php';
 /**
  * Thêm đơn hàng mới và trả về ID đơn hàng vừa tạo
  */
-function donhang_insert($id_user, $nguoi_nhan, $email, $dien_thoai, $dia_chi, $ngay_dat, $tong_tien, $pttt) {
-    $sql = "INSERT INTO donhang (id_user, nguoi_nhan, email, dien_thoai, dia_chi, ngay_dat, tong_tien, pttt, trang_thai) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
-    return pdo_execute($sql, $id_user, $nguoi_nhan, $email, $dien_thoai, $dia_chi, $ngay_dat, $tong_tien, $pttt);
+function donhang_insert($id_user, $nguoi_nhan, $email, $dien_thoai, $dia_chi, $ngay_dat, $tong_tien, $pttt, $ma_giam_gia = null, $tien_giam = 0) {
+    $sql = "INSERT INTO donhang (id_user, nguoi_nhan, email, dien_thoai, dia_chi, ngay_dat, tong_tien, pttt, trang_thai, ma_giam_gia, tien_giam) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)";
+    return pdo_execute($sql, $id_user, $nguoi_nhan, $email, $dien_thoai, $dia_chi, $ngay_dat, $tong_tien, $pttt, $ma_giam_gia, $tien_giam);
 }
 
 /**
