@@ -59,9 +59,15 @@ $currentUser       = $_SESSION['user'] ?? null;
             <!-- AUTH ACTIONS / ĐĂNG NHẬP - ĐĂNG KÝ -->
             <div class="header-actions" style="display: flex; align-items: center; gap: 10px; margin-left: 15px;">
                 <?php if ($currentUser): ?>
-                    <a href="index.php?action=profile" style="background: #ffb703; color: #0d1b2a; font-weight:800; padding: 8px 14px; border-radius: 20px; text-decoration:none; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
-                        <i class="fa-solid fa-user-gear"></i> Hi, <?php echo htmlspecialchars($currentUser['fullname']); ?>
-                    </a>
+                    <?php if (($currentUser['role'] ?? '') === 'admin'): ?>
+                        <a href="index.php?action=admin&sub=product_list" style="background: #ffb703; color: #0d1b2a; font-weight:800; padding: 8px 14px; border-radius: 20px; text-decoration:none; font-size:13px; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 3px 10px rgba(255,183,3,0.4);" title="Vào Trang Quản Trị Admin">
+                            <i class="fa-solid fa-user-shield"></i> Hi, <?php echo htmlspecialchars($currentUser['fullname']); ?> (Quản Trị)
+                        </a>
+                    <?php else: ?>
+                        <a href="index.php?action=profile" style="background: #ffb703; color: #0d1b2a; font-weight:800; padding: 8px 14px; border-radius: 20px; text-decoration:none; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+                            <i class="fa-solid fa-user-gear"></i> Hi, <?php echo htmlspecialchars($currentUser['fullname']); ?>
+                        </a>
+                    <?php endif; ?>
                     <a href="index.php?action=logout" style="background: #e63946; color: white; padding: 8px 12px; border-radius: 20px; text-decoration:none; font-size:13px;" title="Đăng xuất">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </a>
