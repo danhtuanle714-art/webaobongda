@@ -150,6 +150,12 @@ switch ($action) {
             $controller->productDelete();
         } elseif ($sub === 'product_list') {
             $controller->productList();
+        } elseif ($sub === 'user_list') {
+            $controller->userList();
+        } elseif ($sub === 'user_update_role') {
+            $controller->userUpdateRole();
+        } elseif ($sub === 'user_delete') {
+            $controller->userDelete();
         } elseif ($sub === 'statistics') {
             $controller->statistics();
         } else {

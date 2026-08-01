@@ -307,4 +307,40 @@ class AdminController {
         require_once __DIR__ . '/../views/admin/statistics/index.php';
         require_once __DIR__ . '/../views/layouts/footer.php';
     }
+
+    // ==========================================
+    // 4. QUẢN LÝ NGƯỜI DÙNG (Ý 4.4 - USERS)
+    // ==========================================
+    public function userList() {
+        $this->checkAuth();
+        $pageTitle = "Quản Lý Người Dùng - Admin";
+        $users = $this->userModel->getAll();
+
+        require_once __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/admin/users/index.php';
+        require_once __DIR__ . '/../views/layouts/footer.php';
+    }
+
+    public function userUpdateRole() {
+        $this->checkAuth();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $user_id = (int)($_POST['user_id'] ?? 0);
+            $role    = trim($_POST['role'] ?? 'user');
+            if ($user_id > 0) {
+                $this->userModel->updateRole($user_id, $role);
+            }
+        }
+        header("Location: index.php?action=admin&sub=user_list&msg=role_updated");
+        exit();
+    }
+
+    public function userDelete() {
+        $this->checkAuth();
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id > 0) {
+            $this->userModel->delete($id);
+        }
+        header("Location: index.php?action=admin&sub=user_list&msg=deleted");
+        exit();
+    }
 }

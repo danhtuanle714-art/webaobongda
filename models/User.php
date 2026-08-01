@@ -150,4 +150,42 @@ class User {
             'role' => 'user'
         ];
     }
+
+    // [Ý 4.4] Lấy danh sách tất cả người dùng
+    public function getAll() {
+        if ($this->db) {
+            try {
+                $stmt = $this->db->query("SELECT id, fullname, email, phone, address, role, created_at FROM users ORDER BY id ASC");
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {}
+        }
+        return [
+            ['id' => 1, 'fullname' => 'Nguyễn Văn Minh', 'email' => 'minh.nguyen@gmail.com', 'phone' => '0912345678', 'address' => '123 Nguyễn Trãi, Quận 5, TP.HCM', 'role' => 'user', 'created_at' => '2024-01-15 10:00:00'],
+            ['id' => 2, 'fullname' => 'Trần Thị Mai', 'email' => 'mai.tran@gmail.com', 'phone' => '0987654321', 'address' => '456 Lê Lợi, Quận 1, TP.HCM', 'role' => 'user', 'created_at' => '2024-01-16 11:30:00'],
+            ['id' => 3, 'fullname' => 'Lê Danh Tuấn', 'email' => 'danhtuanle714@gmail.com', 'phone' => '0988776655', 'address' => '789 Trần Hưng Đạo, Quận 5, TP.HCM', 'role' => 'admin', 'created_at' => '2024-01-10 08:00:00'],
+            ['id' => 4, 'fullname' => 'Quản Trị Viên (Admin)', 'email' => 'admin@example.com', 'phone' => '0900000000', 'address' => 'Admin Center', 'role' => 'admin', 'created_at' => '2024-01-01 00:00:00']
+        ];
+    }
+
+    // [Ý 4.4] Cập nhật vai trò / thông tin người dùng
+    public function updateRole($id, $role) {
+        if ($this->db) {
+            try {
+                $stmt = $this->db->prepare("UPDATE users SET role = :role WHERE id = :id");
+                return $stmt->execute(['role' => $role, 'id' => $id]);
+            } catch (PDOException $e) { return false; }
+        }
+        return true;
+    }
+
+    // [Ý 4.4] Xóa người dùng theo ID
+    public function delete($id) {
+        if ($this->db) {
+            try {
+                $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
+                return $stmt->execute(['id' => $id]);
+            } catch (PDOException $e) { return false; }
+        }
+        return true;
+    }
 }
