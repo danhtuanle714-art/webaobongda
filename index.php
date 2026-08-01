@@ -156,6 +156,10 @@ switch ($action) {
             $controller->userUpdateRole();
         } elseif ($sub === 'user_delete') {
             $controller->userDelete();
+        } elseif ($sub === 'comment_list') {
+            $controller->commentList();
+        } elseif ($sub === 'comment_delete') {
+            $controller->commentDelete();
         } elseif ($sub === 'statistics') {
             $controller->statistics();
         } else {

@@ -75,6 +75,33 @@ class Comment {
             ]
         ];
     }
+
+    // Lấy tất cả bình luận cho Admin
+    public function getAll() {
+        if ($this->db) {
+            try {
+                $sql = "SELECT c.*, p.name AS product_name FROM comments c LEFT JOIN products p ON c.product_id = p.id ORDER BY c.id DESC";
+                $stmt = $this->db->query($sql);
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {}
+        }
+        return [
+            ['id' => 1, 'product_id' => 1, 'product_name' => 'Áo Real Madrid Sân Nhà 2024/25', 'user_name' => 'Nguyễn Văn Minh', 'content' => 'Áo Real Madrid chất vải thun lạnh quá đẹp, mặc mát lạnh! In số 7 Ronaldo cực nét.', 'rating' => 5, 'created_at' => '2026-07-18 14:00:00'],
+            ['id' => 2, 'product_id' => 1, 'product_name' => 'Áo Real Madrid Sân Nhà 2024/25', 'user_name' => 'Trần Thị Mai', 'content' => 'Shop giao hàng rất nhanh, đóng gói cẩn thận. Áo mặc vừa vặn chuẩn phom.', 'rating' => 5, 'created_at' => '2026-07-19 09:30:00'],
+            ['id' => 3, 'product_id' => 5, 'product_name' => 'Áo ĐT Việt Nam Sân Nhà 2024/25 Red Dragon', 'user_name' => 'Phạm Quốc Cường', 'content' => 'Áo Việt Nam màu đỏ rồng thắm sang xịn mịn! Rất tự hào khi mặc đi cổ vũ.', 'rating' => 5, 'created_at' => '2026-07-20 16:20:00']
+        ];
+    }
+
+    // Xóa bình luận theo ID
+    public function delete($id) {
+        if ($this->db) {
+            try {
+                $stmt = $this->db->prepare("DELETE FROM comments WHERE id = :id");
+                return $stmt->execute(['id' => $id]);
+            } catch (PDOException $e) { return false; }
+        }
+        return true;
+    }
 }
 
 // Bổ sung alias CmtModel theo mã slide bài giảng

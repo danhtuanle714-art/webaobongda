@@ -3,11 +3,13 @@
 require_once __DIR__ . '/../models/Category.php';
 require_once __DIR__ . '/../models/Product.php';
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Comment.php';
 
 class AdminController {
     private $categoryModel;
     private $productModel;
     private $userModel;
+    private $commentModel;
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
@@ -16,6 +18,7 @@ class AdminController {
         $this->categoryModel = new Category();
         $this->productModel  = new Product();
         $this->userModel     = new User();
+        $this->commentModel  = new Comment();
     }
 
     // [BÀI 1 IN ADMIN] ĐĂNG NHẬP ADMIN
@@ -341,6 +344,29 @@ class AdminController {
             $this->userModel->delete($id);
         }
         header("Location: index.php?action=admin&sub=user_list&msg=deleted");
+        exit();
+    }
+
+    // ==========================================
+    // 5. QUẢN LÝ BÌNH LUẬN & ĐÁNH GIÁ (COMMENTS)
+    // ==========================================
+    public function commentList() {
+        $this->checkAuth();
+        $pageTitle = "Quản Lý Bình Luận - Admin";
+        $comments = $this->commentModel->getAll();
+
+        require_once __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/admin/comments/index.php';
+        require_once __DIR__ . '/../views/layouts/footer.php';
+    }
+
+    public function commentDelete() {
+        $this->checkAuth();
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id > 0) {
+            $this->commentModel->delete($id);
+        }
+        header("Location: index.php?action=admin&sub=comment_list&msg=deleted");
         exit();
     }
 }
