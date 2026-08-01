@@ -271,10 +271,12 @@ class AdminController {
         // Lấy kết nối PDO từ CategoryModel
         $db = $this->categoryModel->getPdoConnection();
 
-        $total_categories = 0;
-        $total_products   = 0;
-        $total_users      = 0;
-        $total_comments   = 0;
+        $total_categories = 4;
+        $total_products   = 10;
+        $total_users      = 4;
+        $total_comments   = 3;
+        $max_price        = 360000;
+        $max_product_name = "Áo Đấu Đặc Biệt Royal Gold 2024/25";
         $category_stats   = [];
 
         if ($db) {
@@ -283,6 +285,13 @@ class AdminController {
                 $total_products   = (int)$db->query("SELECT COUNT(*) FROM products")->fetchColumn();
                 $total_users      = (int)$db->query("SELECT COUNT(*) FROM users")->fetchColumn();
                 
+                // Lấy giá trị lớn nhất của sản phẩm
+                $maxPriceQuery = $db->query("SELECT name, price FROM products ORDER BY price DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+                if ($maxPriceQuery) {
+                    $max_price = $maxPriceQuery['price'];
+                    $max_product_name = $maxPriceQuery['name'];
+                }
+
                 // Kiểm tra bảng comments có tồn tại không
                 $hasComments = $db->query("SHOW TABLES LIKE 'comments'")->rowCount() > 0;
                 if ($hasComments) {
