@@ -257,4 +257,54 @@ class AdminController {
         header("Location: index.php?action=admin&sub=product_list&msg=deleted");
         exit();
     }
+
+    // ==========================================
+    // 3. BÁO CÁO THỐNG KÊ (GIAI ĐOẠN 2 - 5%)
+    // ==========================================
+    public function statistics() {
+        $this->checkAuth();
+        $pageTitle = "Báo Cáo Thống Kê - Admin";
+
+        // Lấy kết nối PDO từ CategoryModel
+        $db = $this->categoryModel->getPdoConnection();
+
+        $total_categories = 0;
+        $total_products   = 0;
+        $total_users      = 0;
+        $total_comments   = 0;
+        $category_stats   = [];
+
+        if ($db) {
+            try {
+                $total_categories = (int)$db->query("SELECT COUNT(*) FROM categories")->fetchColumn();
+                $total_products   = (int)$db->query("SELECT COUNT(*) FROM products")->fetchColumn();
+                $total_users      = (int)$db->query("SELECT COUNT(*) FROM users")->fetchColumn();
+                
+                // Kiểm tra bảng comments có tồn tại không
+                $hasComments = $db->query("SHOW TABLES LIKE 'comments'")->rowCount() > 0;
+                if ($hasComments) {
+                    $total_comments = (int)$db->query("SELECT COUNT(*) FROM comments")->fetchColumn();
+                }
+
+                // Thống kê theo danh mục
+                $sql = "SELECT c.id, c.name AS category_name, 
+                               COUNT(p.id) AS product_count, 
+                               IFNULL(MIN(p.price), 0) AS min_price, 
+                               IFNULL(MAX(p.price), 0) AS max_price, 
+                               IFNULL(AVG(p.price), 0) AS avg_price 
+                        FROM categories c 
+                        LEFT JOIN products p ON c.id = p.category_id 
+                        GROUP BY c.id, c.name 
+                        ORDER BY c.id ASC";
+                $stmt = $db->query($sql);
+                $category_stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                // Fallback nếu có lỗi PDO
+            }
+        }
+
+        require_once __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/admin/statistics/index.php';
+        require_once __DIR__ . '/../views/layouts/footer.php';
+    }
 }

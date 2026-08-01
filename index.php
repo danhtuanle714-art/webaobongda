@@ -124,6 +124,11 @@ switch ($action) {
         $controller->productList();
         break;
 
+    case 'statistics':
+        $controller = new AdminController();
+        $controller->statistics();
+        break;
+
     case 'admin':
         $controller = new AdminController();
         $sub = $_GET['sub'] ?? ($_GET['act'] ?? '');
@@ -145,6 +150,8 @@ switch ($action) {
             $controller->productDelete();
         } elseif ($sub === 'product_list') {
             $controller->productList();
+        } elseif ($sub === 'statistics') {
+            $controller->statistics();
         } else {
             $controller->categoryList();
         }

@@ -9,6 +9,10 @@ class Category {
         $this->db = db_connect();
     }
 
+    public function getPdoConnection() {
+        return $this->db;
+    }
+
     // Lấy 1 danh mục theo ID theo chuẩn Slide
     public function get_category_one($id) {
         return $this->getById($id);
