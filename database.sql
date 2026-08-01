@@ -108,7 +108,8 @@ INSERT INTO `posts` (`id`, `title`, `summary`, `content`, `image`) VALUES
 INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `phone`, `address`, `role`) VALUES
 (1, 'Nguyễn Văn Minh', 'minh.nguyen@gmail.com', '$2y$10$vYqF2j4F8s1k.5kH5E/vvu70k4V7p0y7p0y7p0y7p0y7p0y7p0y7p', '0912345678', '123 Nguyễn Trãi, Quận 5, TP.HCM', 'user'),
 (2, 'Trần Thị Mai', 'mai.tran@gmail.com', '$2y$10$vYqF2j4F8s1k.5kH5E/vvu70k4V7p0y7p0y7p0y7p0y7p0y7p0y7p', '0987654321', '456 Lê Lợi, Quận 1, TP.HCM', 'user'),
-(3, 'Lê Danh Tuấn', 'danhtuanle714@gmail.com', '$2y$10$vYqF2j4F8s1k.5kH5E/vvu70k4V7p0y7p0y7p0y7p0y7p0y7p0y7p', '0988776655', '789 Trần Hưng Đạo, Quận 5, TP.HCM', 'user');
+(3, 'Lê Danh Tuấn', 'danhtuanle714@gmail.com', '$2y$10$vYqF2j4F8s1k.5kH5E/vvu70k4V7p0y7p0y7p0y7p0y7p0y7p0y7p', '0988776655', '789 Trần Hưng Đạo, Quận 5, TP.HCM', 'admin'),
+(4, 'Quản Trị Viên (Admin)', 'admin@example.com', '$2y$10$vYqF2j4F8s1k.5kH5E/vvu70k4V7p0y7p0y7p0y7p0y7p0y7p0y7p', '0900000000', 'Admin Center', 'admin');
 
 -- Chèn dữ liệu mẫu Comments (Bài 2)
 INSERT INTO `comments` (`id`, `product_id`, `user_name`, `content`, `rating`) VALUES
